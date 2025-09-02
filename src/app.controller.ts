@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -19,18 +19,23 @@ export class AppController {
     return this.appService.findAll();
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: number){
+    return this.appService.findOne(id);
+  }
+
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.appService.create(createCustomerDto);
   }
 
-  @Patch()
-  update(@Body() updateCustomerDto: UpdateCustomerDto) {
-    return this.appService.update(updateCustomerDto);
+  @Put(':id')
+  update(@Param('id') id: number, @Body() updateCustomerDto: UpdateCustomerDto) {
+    return this.appService.update(id, updateCustomerDto);
   }
 
-  @Delete()
-  delete(@Body() updateCustomerDto: UpdateCustomerDto) {
-    return this.appService.update(updateCustomerDto);
+  @Delete(':id')
+  remove(@Param('id') id: number) {
+    return this.appService.remove(id);
   }
 }

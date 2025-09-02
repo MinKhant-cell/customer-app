@@ -88,4 +88,9 @@ npx prisma migrate dev --name init
 npm install @prisma/client
 
 npx prisma generate
+
+
+#testing
+npm i --save-dev @nestjs/testing
+
 ```
