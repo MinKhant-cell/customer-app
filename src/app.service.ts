@@ -1,51 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-interface Customer {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  status: string;
-}
-
+import { PrismaService } from './prisma/prisma.service';
+import { CustomerDto } from './dto/customer.dto';
 @Injectable()
 export class AppService {
-  private customers = [
-    {
-      id: 1,
-      name: 'John',
-      email: 'john@gmail.com',
-      phone: '+664849545',
-      status: 'active',
-    },
-    {
-      id: 2,
-      name: 'Henery',
-      email: 'henery@gmail.com',
-      phone: '+663843845',
-      status: 'active',
-    },
-  ];
-  constructor() {}
+  constructor(private prisma: PrismaService) {}
 
   getHello(): string {
     return 'This is Customer Service!';
   }
 
-  findAll(): Customer[] {
-    return this.customers;
+  async findAll(): Promise<CustomerDto[]> {
+    const customers = await this.prisma.customer.findMany();
+    return customers;
   }
 
-  create(createCustomerDto: CreateCustomerDto): string {
-    console.log(createCustomerDto.email);
-    const newCustomer = {
-      ...createCustomerDto,
-      id: this.customers.length + 1,
-      status: 'active',
-    };
-    this.customers = [...this.customers, newCustomer];
-    return 'This action store customer data.';
+  async create(createCustomerDto: CreateCustomerDto): Promise<CustomerDto> {
+    const newCustomer = await this.prisma.customer.create({ data: createCustomerDto});
+    return newCustomer;
   }
 
   update(updateCustomerDto: UpdateCustomerDto): string {

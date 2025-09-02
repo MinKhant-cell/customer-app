@@ -7,7 +7,7 @@ interface Customer {
   name: string;
   email: string;
   phone: string;
-  status: string;
+  status: boolean;
 }
 
 @Controller()
@@ -15,7 +15,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  findAll(): Customer[] {
+  findAll() {
     return this.appService.findAll();
   }
 
