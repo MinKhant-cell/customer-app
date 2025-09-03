@@ -94,3 +94,7 @@ npx prisma generate
 npm i --save-dev @nestjs/testing
 
 ```
+
+File Upload
+
+npm i -D @types/multer

@@ -1,16 +1,25 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import * as crypto from 'node:crypto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-interface Customer {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  status: boolean;
-}
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileSizeValidationPipe } from './pipes/file-size-validation.pipe';
 
-@Controller()
+@Controller('customers')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -20,7 +29,7 @@ export class AppController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number){
+  findOne(@Param('id') id: number) {
     return this.appService.findOne(id);
   }
 
@@ -30,12 +39,34 @@ export class AppController {
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() updateCustomerDto: UpdateCustomerDto) {
+  update(
+    @Param('id') id: number,
+    @Body() updateCustomerDto: UpdateCustomerDto,
+  ) {
     return this.appService.update(id, updateCustomerDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.appService.remove(id);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@UploadedFile(new FileSizeValidationPipe()) file: Express.Multer.File) {
+    const uploadDir = path.join(__dirname, '..', 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    const uniqueKey = crypto.randomInt(100000, 999999).toString();
+    const now = new Date();
+    const fileName = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${uniqueKey}${path.extname(file.originalname)}`;
+    const filePath = path.join(uploadDir, fileName);
+    fs.writeFileSync(filePath, file.buffer);
+    return {
+      message: 'File uploaded successfully',
+      filename: file.originalname,
+      path: filePath,
+    };
   }
 }
