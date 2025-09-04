@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { PrismaService } from './prisma/prisma.service';
@@ -40,27 +45,30 @@ export class AppService {
     updateCustomerDto: UpdateCustomerDto,
   ): Promise<string | CustomerDto> {
     try {
-      const customer =  await this.prisma.customer.findUnique({ where: { id } });
-      if(!customer) throw new NotFoundException(`Customer Id: ${id} doesn't exist!`, {
-        cause: new Error(),
-        description: 'Customer Not Found',
-      });
+      const customer = await this.prisma.customer.findUnique({ where: { id } });
+      if (!customer)
+        throw new NotFoundException(`Customer Id: ${id} doesn't exist!`, {
+          cause: new Error(),
+          description: 'Customer Not Found',
+        });
       return await this.prisma.customer.update({
         where: { id },
         data: updateCustomerDto,
       });
-       ;
     } catch (error) {
-
       if (error instanceof HttpException) {
         throw error;
       }
-      throw new HttpException({
-      status: HttpStatus.FORBIDDEN,
-      error: 'This is a custom message.',
-    }, HttpStatus.FORBIDDEN, {
-      cause: error
-    });
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'This is a custom message.',
+        },
+        HttpStatus.FORBIDDEN,
+        {
+          cause: error,
+        },
+      );
     }
   }
 

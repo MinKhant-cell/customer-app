@@ -53,7 +53,9 @@ export class AppController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile(new FileSizeValidationPipe()) file: Express.Multer.File) {
+  uploadFile(
+    @UploadedFile(new FileSizeValidationPipe()) file: Express.Multer.File,
+  ) {
     const uploadDir = path.join(__dirname, '..', 'uploads');
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });

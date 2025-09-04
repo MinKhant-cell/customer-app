@@ -9,21 +9,30 @@ describe('AppController', () => {
   let appController: AppController;
   let appService: AppService;
   let prismaService: PrismaService;
-  const testCustomer = { id: 1, name: 'John Doe', email: 'john@example.com', phone: '12345', isActive: true };
+  const testCustomer = {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com',
+    phone: '12345',
+    isActive: true,
+  };
   const mockCustomerService = {
-      findAll: jest.fn().mockResolvedValue([testCustomer]),
-      findOne: jest.fn().mockResolvedValue(testCustomer),
-      create: jest.fn().mockResolvedValue(testCustomer),
-      update: jest.fn().mockResolvedValue({ ...testCustomer, name: 'Jane Doe' }),
-      remove: jest.fn().mockResolvedValue(testCustomer),
-    };
+    findAll: jest.fn().mockResolvedValue([testCustomer]),
+    findOne: jest.fn().mockResolvedValue(testCustomer),
+    create: jest.fn().mockResolvedValue(testCustomer),
+    update: jest.fn().mockResolvedValue({ ...testCustomer, name: 'Jane Doe' }),
+    remove: jest.fn().mockResolvedValue(testCustomer),
+  };
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [{
-        provide: AppService, useValue: mockCustomerService
-      }],
+      providers: [
+        {
+          provide: AppService,
+          useValue: mockCustomerService,
+        },
+      ],
     }).compile();
 
     appController = app.get<AppController>(AppController);
@@ -40,16 +49,24 @@ describe('AppController', () => {
     });
 
     it('should create a customer', async () => {
-      expect(await appController.create({ name: 'John Doe', email: 'john@example.com', phone: '12345' })).toEqual(testCustomer);
+      expect(
+        await appController.create({
+          name: 'John Doe',
+          email: 'john@example.com',
+          phone: '12345',
+        }),
+      ).toEqual(testCustomer);
     });
 
     it('should update a customer', async () => {
-      expect(await appController.update(1,{ name: 'Jane Doe'})).toEqual({...testCustomer, name: 'Jane Doe' });
+      expect(await appController.update(1, { name: 'Jane Doe' })).toEqual({
+        ...testCustomer,
+        name: 'Jane Doe',
+      });
     });
 
     it('should delete a customer', async () => {
       expect(await appController.remove(1)).toEqual(testCustomer);
     });
-
   });
 });
