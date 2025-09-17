@@ -51,10 +51,11 @@ export class AppController {
     return this.appService.remove(id);
   }
 
-  @Post('upload')
+  @Post('upload/:id')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
     @UploadedFile(new FileSizeValidationPipe()) file: Express.Multer.File,
+    @Param('id') id: number
   ) {
     const uploadDir = path.join(__dirname, '..', 'uploads');
     if (!fs.existsSync(uploadDir)) {
@@ -64,11 +65,15 @@ export class AppController {
     const now = new Date();
     const fileName = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${uniqueKey}${path.extname(file.originalname)}`;
     const filePath = path.join(uploadDir, fileName);
-    fs.writeFileSync(filePath, file.buffer);
-    return {
-      message: 'File uploaded successfully',
-      filename: file.originalname,
-      path: filePath,
-    };
+    console.log(filePath)
+    console.log(id)
+
+    
+    // fs.writeFileSync(filePath, file.buffer);
+    // return {
+    //   message: 'File uploaded successfully',
+    //   filename: file.originalname,
+    //   path: filePath,
+    // };
   }
 }

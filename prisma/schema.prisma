@@ -18,6 +18,7 @@ model Customer {
   name String
   email String? @unique()
   phone String  @unique()
+  image String?
   isActive Boolean? @default(true)
 }
 

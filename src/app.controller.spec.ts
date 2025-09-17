@@ -15,6 +15,7 @@ describe('AppController', () => {
     email: 'john@example.com',
     phone: '12345',
     isActive: true,
+    image: 'default.jpg'
   };
   const mockCustomerService = {
     findAll: jest.fn().mockResolvedValue([testCustomer]),

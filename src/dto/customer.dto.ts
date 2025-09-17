@@ -3,4 +3,6 @@ export class CustomerDto {
   email: string | null;
   phone: string;
   isActive: boolean | null;
+  image: string | null; 
+
 }

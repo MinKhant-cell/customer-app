@@ -10,7 +10,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { CustomerDto } from './dto/customer.dto';
 @Injectable()
 export class AppService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   getHello(): string {
     return 'This is Customer Service!';
@@ -54,6 +54,37 @@ export class AppService {
       return await this.prisma.customer.update({
         where: { id },
         data: updateCustomerDto,
+      });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'This is a custom message.',
+        },
+        HttpStatus.FORBIDDEN,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  async uploadImage(id, filePath: string): Promise<string | CustomerDto> {
+    try {
+      const customer = await this.prisma.customer.findUnique({ where: { id } });
+      if (!customer)
+        throw new NotFoundException(`Customer Id: ${id} doesn't exist!`, {
+          cause: new Error(),
+          description: 'Customer Not Found',
+        });
+      return await this.prisma.customer.update({
+        where: { id },
+        data: {
+          image: filePath
+        },
       });
     } catch (error) {
       if (error instanceof HttpException) {
